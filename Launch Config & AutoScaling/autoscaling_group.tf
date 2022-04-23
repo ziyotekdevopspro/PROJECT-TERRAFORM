@@ -92,6 +92,6 @@ resource "aws_lb_target_group" "devops16_lb_tg_config" {
 
 # Create a new ALB Target Group attachment
 resource "aws_autoscaling_attachment" "asg_attachment_bar" {
-  autoscaling_group_name = aws_autoscaling_group.devops16_autoscaling_config.id
+  autoscaling_group_name = aws_autoscaling_group.devops16_autoscaling_image.id
   lb_target_group_arn    = aws_lb_target_group.devops16_lb_tg_config.arn
 }
