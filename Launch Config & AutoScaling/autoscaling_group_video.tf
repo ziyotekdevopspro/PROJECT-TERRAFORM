@@ -6,11 +6,11 @@ resource "aws_autoscaling_group" "devops16_autoscaling_video" {
   health_check_grace_period = 300
   force_delete              = true
   launch_configuration      = aws_launch_configuration.devops16_lc_video.name
-  vpc_zone_identifier       = [aws_subnet.project-subnet.id, aws_subnet.project-subnet-2.id]
+  vpc_zone_identifier       = [aws_subnet.project-subnet.id,aws_subnet.project-subnet-2.id]
 
   tag {
     key                 = "Name"
-    value               = "devops16-project-video"
+    value               = "${var.environment} - video"
     propagate_at_launch = true
   }
  }
@@ -19,11 +19,12 @@ resource "aws_lb" "devops16_alb_video" {
   name               = "loadbalancer-video"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.allow_web.id]
-  subnets            = [aws_subnet.project-subnet.id, aws_subnet.project-subnet-2.id]
+  security_groups    = [aws_security_group.allow_all.id]
+  subnets            = [aws_subnet.project-subnet.id,aws_subnet.project-subnet-2.id]
 
   tags = {
-    Environment = "DEVOPS16 Project - Load balancer video"
+    key                 = "Name"
+    value               = "${var.environment} - Load balancer video"
   }
 }
 

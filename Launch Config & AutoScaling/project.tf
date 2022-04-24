@@ -1,21 +1,21 @@
-# 1. Create VPC
+# Step 1. Create VPC
 resource "aws_vpc" "project-vpc" {
   cidr_block = "10.0.0.0/16"
   tags = {
-    Name = "DEVOPS16 Project VPC"
+    Name = "${var.environment} - VPC"
   }
 }
 
-# 2. Create Internet Gateway
+# Step 2. Create Internet Gateway
 resource "aws_internet_gateway" "project-gateway" {
   vpc_id = aws_vpc.project-vpc.id
 
   tags = {
-    Name = "DEVOPS16 Project Gateway"
+    Name = "${var.environment} - Gateway"
   }
 }
 
-# 3. Create Custom Route Table
+# Step 3. Create Route Table
 resource "aws_route_table" "project-routetable" {
   vpc_id = aws_vpc.project-vpc.id
 
@@ -30,18 +30,18 @@ resource "aws_route_table" "project-routetable" {
   }
 
   tags = {
-    Name = "DEVOPS16 Project Route Table"
+    Name = "${var.environment} - Route Table"
   }
 }
 
-# 4. Create Subnets
+# Step 4. Create Subnets
 resource "aws_subnet" "project-subnet" {
   vpc_id     = aws_vpc.project-vpc.id
   cidr_block = var.subnet_cidr
   availability_zone = var.availability_zone
 
   tags = {
-    Name = "DEVOPS16 Project subnet"
+    Name = "${var.environment} - subnet 1"
   }
 }
 
@@ -51,54 +51,42 @@ resource "aws_subnet" "project-subnet-2" {
   availability_zone = var.availability_zone_2
 
   tags = {
-    Name = "DEVOPS16 Project subnet 2"
+    Name = "${var.environment} - subnet 2"
   }
 }
 
-# 5. Create Subnet with Route Table
+# Step 5. Create Subnets with Route Table
 resource "aws_route_table_association" "a" {
   subnet_id      = aws_subnet.project-subnet.id
   route_table_id = aws_route_table.project-routetable.id
 }
 
-# 6. Create Security Group to allow ports:22,80,443
-resource "aws_security_group" "allow_web" {
-  name        = "allow_web_tracffic"
-  description = "Allow Web inbound traffic"
+resource "aws_route_table_association" "b" {
+  subnet_id      = aws_subnet.project-subnet-2.id
+  route_table_id = aws_route_table.project-routetable.id
+}
+
+# Step 6. Create Security Group to allow ports:22,80,443
+resource "aws_security_group" "allow_all" {
+  name        = "allow_all_tracffic"
+  description = "Allow all inbound traffic"
   vpc_id      = aws_vpc.project-vpc.id
 
-  ingress {
-    description      = "HTTPS from VPC"
-    from_port        = 443
-    to_port          = 443
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-   }
-
-  ingress {
-    description      = "HTTP"
-    from_port        = 80
-    to_port          = 80
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-   }
-
-  ingress {
-    description      = "SSH"
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
-    cidr_blocks      = ["0.0.0.0/0"]
-   }
+   ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   egress {
-    from_port        = 0
-    to_port          = 0
-    protocol         = "-1"
-    cidr_blocks      = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = {
-    Name = "DEVOPS16 Project allow_web"
+    Name = "${var.environment} - Allow all"
   }
 } 
