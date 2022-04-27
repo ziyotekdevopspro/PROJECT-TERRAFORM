@@ -1,6 +1,6 @@
 resource "aws_autoscaling_group" "devops16_autoscaling_video" {
   name                      = "video"
-  max_size                  = 2
+  max_size                  = 3
   min_size                  = 1
   desired_capacity          = 1
   health_check_grace_period = 300
@@ -38,7 +38,7 @@ resource "aws_lb_target_group" "devops16_lb_tg_video" {
     healthy_threshold = 10
     timeout = 5
     interval = 30
-    path = "/"
+    path = "/videos/"
     port = "traffic-port"
     matcher = "200-400" #success code
   }
@@ -66,7 +66,7 @@ resource "aws_lb_listener_rule" "devops16_listener_rule_video" {
 
   condition {
     path_pattern {
-      values = ["/video/*"]
+      values = ["*/videos*"]
     }
   }
 }
