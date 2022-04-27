@@ -6,7 +6,7 @@ resource "aws_launch_configuration" "devops16_lc_image" {
   key_name          = var.key_name
   security_groups   = [aws_security_group.allow_all.id]
   #iam_instance_profile = "${aws_iam_instance_profile.s3_profile.name}"
-  user_data = file("userdata_image.sh")
+  user_data = file("userdata_image.sh") 
 }
 
 resource "aws_launch_configuration" "devops16_lc_video" {
